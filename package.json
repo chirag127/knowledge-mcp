@@ -1,0 +1,21 @@
+{
+  "name": "knowledge-mcp",
+  "version": "0.1.0",
+  "description": "Public MCP server exposing chirag127's OKF knowledge bundle — search, read, list, related. Hosted at knowledge-mcp.oriz.in. No auth. CF Worker.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:index": "node scripts/build-index.mjs",
+    "dev": "wrangler dev",
+    "deploy": "npm run build:index && wrangler deploy",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260615.0",
+    "gray-matter": "^4.0.3",
+    "wrangler": "^4.107.0"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}

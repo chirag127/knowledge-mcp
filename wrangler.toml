@@ -1,0 +1,22 @@
+name = "knowledge-mcp"
+main = "src/index.ts"
+compatibility_date = "2026-06-15"
+compatibility_flags = ["nodejs_compat"]
+
+# Custom domain wired via CF Pages/Workers routes
+routes = [
+  { pattern = "knowledge-mcp.oriz.in", custom_domain = true }
+]
+
+[observability]
+enabled = true
+
+[[rules]]
+type = "Data"
+globs = ["**/*.json"]
+fallthrough = true
+
+# Bundle index at build time
+[assets]
+directory = "./public"
+binding = "ASSETS"
