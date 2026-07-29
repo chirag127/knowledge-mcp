@@ -1,6 +1,12 @@
 # knowledge-mcp
 
+[![Stars](https://img.shields.io/github/stars/chirag127/knowledge-mcp?style=flat-square)](https://github.com/chirag127/knowledge-mcp/stargazers)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](./LICENSE)
+
 Public MCP server exposing [chirag127's OKF knowledge bundle](https://knowledge.oriz.in) over MCP.
+
+Live endpoint: **https://knowledge-mcp.oriz.in/mcp**
+
 
 **No auth. Free. 793 concept files searchable + readable via `search`, `read`, `list`, `related` tools.**
 
