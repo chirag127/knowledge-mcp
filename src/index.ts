@@ -28,7 +28,7 @@ import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { WebStandardStreamableHTTPServerTransport } from '@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js'
 import { z } from 'zod'
 
-interface Concept {
+export interface Concept {
   slug: string
   title: string
   description: string
@@ -39,13 +39,18 @@ interface Concept {
   bodyPreview?: string
 }
 
-type IndexData = { concepts: Concept[]; totalCount: number; builtAt: string }
+export type IndexData = { concepts: Concept[]; totalCount: number; builtAt: string }
 
 interface Env {
   ASSETS: { fetch: (req: Request | string) => Promise<Response> }
 }
 
 let INDEX_CACHE: IndexData | null = null
+
+/** Test-only: clear the module-level index cache so a fresh env is re-read. */
+export function __resetIndexCache(): void {
+  INDEX_CACHE = null
+}
 
 async function getIndex(env: Env): Promise<IndexData> {
   if (INDEX_CACHE) return INDEX_CACHE
@@ -65,11 +70,11 @@ const SITE_ORIGIN = 'https://knowledge.oriz.in'
 
 // ---- Search-index logic (unchanged behaviour) ----
 
-function tokenize(s: string): string[] {
+export function tokenize(s: string): string[] {
   return s.toLowerCase().split(/[^a-z0-9]+/).filter(t => t.length > 2)
 }
 
-function search(idx: IndexData, query: string, limit: number, type?: string): Concept[] {
+export function search(idx: IndexData, query: string, limit: number, type?: string): Concept[] {
   const qTokens = tokenize(query)
   if (qTokens.length === 0) return []
   const scored = idx.concepts
@@ -85,7 +90,7 @@ function search(idx: IndexData, query: string, limit: number, type?: string): Co
   return scored.map(s => s.c)
 }
 
-async function read(idx: IndexData, slug: string, siteOrigin: string): Promise<string | null> {
+export async function read(idx: IndexData, slug: string, siteOrigin: string): Promise<string | null> {
   const clean = slug.replace(/^\/+/, '').replace(/\.md$/, '').replace(/\.html$/, '')
   const url = `${siteOrigin}/${clean}.html`
   const c = idx.concepts.find(c => c.slug === clean)
@@ -93,13 +98,13 @@ async function read(idx: IndexData, slug: string, siteOrigin: string): Promise<s
   return `# ${c.title}\n\n${c.description}\n\n---\n\nType: ${c.type}\nTags: ${(c.tags || []).join(', ')}\n${c.timestamp ? `Timestamp: ${c.timestamp}\n` : ''}\n\nFull HTML: ${url}\nRaw source: https://github.com/chirag127/workspace/blob/main/knowledge/${clean}.md\n\n${c.bodyPreview || ''}`
 }
 
-function listConcepts(idx: IndexData, type?: string, tag?: string, limit = 20): Concept[] {
+export function listConcepts(idx: IndexData, type?: string, tag?: string, limit = 20): Concept[] {
   return idx.concepts
     .filter(c => (!type || c.type === type) && (!tag || (c.tags || []).includes(tag)))
     .slice(0, limit)
 }
 
-function related(idx: IndexData, slug: string, depth: number): Concept[] {
+export function related(idx: IndexData, slug: string, depth: number): Concept[] {
   const seen = new Set<string>()
   const queue: Array<{ slug: string; d: number }> = [{ slug, d: 0 }]
   const found: Concept[] = []
@@ -130,7 +135,7 @@ function textResult(content: unknown) {
 
 const CONCEPT_TYPES = ['decision', 'rule', 'runbook', 'service', 'glossary', 'index'] as const
 
-function buildServer(env: Env): McpServer {
+export function buildServer(env: Env): McpServer {
   const server = new McpServer(SERVER_INFO, {
     capabilities: { tools: {} },
     instructions:
